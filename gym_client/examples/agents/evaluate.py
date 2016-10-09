@@ -10,6 +10,7 @@ from Lis_pred2 import PredNet2Layer
 from Lis_pred3 import PredNet3Layer
 
 from chainer import links as L
+from chainer import serializers
 from chainer import cuda
 from models.PredNet import PredNet
 
@@ -30,8 +31,13 @@ def make_error_movie(model_file="1Layer_999", movie_len = 60,input_movie="normal
     """
     size = (160,128)
 
+    model = L.Classifier( PredNet1Layer(width=160, height=128, channels=[3,48,96,192], batchSize=1 ), lossfun=F.mean_squared_error)
+    #model = L.Classifier( PredNet2Layer(width=160, height=128, channels=[3,48,96,192], batchSize=1 ), lossfun=F.mean_squared_error)
+    #model = L.Classifier( PredNet3Layer(width=160, height=128, channels=[3,48,96,192], batchSize=1 ), lossfun=F.mean_squared_error)
+    model.compute_accuracy = False
+    serializers.load_npz("./models/" +  model_file +"_model.npz",model)
+
     data = pickle.load(open("./movies/" +input_movie+"_movie.pkl","r"))
-    model = pickle.load(open("./models/" + model_file + "_model.pkl","r"))
 
     movie = np.zeros((movie_len,3 ,size[1],size[0]),dtype=np.float32)
 

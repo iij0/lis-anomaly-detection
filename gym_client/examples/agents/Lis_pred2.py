@@ -8,6 +8,7 @@ from chainer import functions as F
 from chainer import links as L
 from chainer import cuda
 from models.PredNet import PredNet
+from chainer import serializers
 
 import time
 
@@ -101,10 +102,12 @@ def learn(movie_type = "nothing"):
         loss = 0
         optimizer.update()
 
+
+    serializers.save_npz("2Layer_" + str(epoch) + "_" + "model.npz" , model)
     if args.gpu >= 0: model.to_cpu()
     print "model saving"
-    pickle.dump(model,open("2Layer_" + movie_type + str(epoch) + "_" + "model.pkl" , "wb") , -1)
-    if args.gpu >= 0: model.to_gpu()
+    pickle.dump(model,open("2Layer_" + str(epoch) + "_" + "model.pkl" , "wb") , -1)
+
 
 
 def observe(file_name = "movie"):
