@@ -43,18 +43,26 @@ class PredNet2Layer(chainer.Chain):
 
 
 
-def learn(movie_type = "nothing"):
+def learn(movie_type = "nothing", npz_file_name = None):
     """
     movie.pickleを用いて，PredNetの学習を行う
     Returns:
 
     """
+    print "movie type : " , movie_type
+    print "npz file name : " , npz_file_name
 
     data = pickle.load(open("./movies/" + movie_type  + "_movie.pkl","r"))
     print "movie " , movie_type , " loaded"
     xp = cuda.cupy if args.gpu >= 0 else np
     model = L.Classifier( PredNet2Layer(width=160, height=128, channels=[3,48,96,192], batchSize=1 ), lossfun=F.mean_squared_error)
     model.compute_accuracy = False
+    if npz_file_name is not None :
+        # load params
+        serializers.load_npz("./models/" +  npz_file_name +"_model.npz",model)
+        print "model loaded"
+
+
 
 
     # load model
@@ -108,8 +116,6 @@ def learn(movie_type = "nothing"):
     print "model saving"
     pickle.dump(model,open("2Layer_" + str(epoch) + "_" + "model.pkl" , "wb") , -1)
 
-
-
 def observe(file_name = "movie"):
     """
     背景学習のための，観測スクリプト
@@ -139,44 +145,10 @@ def observe(file_name = "movie"):
 
     env.close()
 
-def make_error_movie(model="./model.pkl", movie_len = 100):
-    """
-    既存のモデルを読み込み，ある環境でのエラーを動画化する
-
-    Args:
-        model: pickle file
-
-    Returns:
-
-    """
-    # 前進のみ行う
-    action = 0
-    env = gym.make('Lis-v2')
-    observation = env.reset()
-    observation, reward, end_episode, _ = env.step(action)
-
-    seq_len = 30 + 1
-    data = np.zeros( (seq_len , 3 ,128 , 160) , dtype=np.float32)
-
-    for seq in range(seq_len):
-        # 現在の環境では，5ステップ前後で1周
-        observation, reward, end_episode, _ = env.step(action)
-        image = np.array(observation["image"][0].resize((160,128))).transpose(2, 0, 1)[::-1].astype(np.float32) / 255
-        data[seq] = image
-
-
-    print "data generated " , data.shape
-    pickle.dump(data,open("movie.pkl","wb"),-1)
-
-    env.close()
-
-
-
-
 if __name__ == "__main__":
 
     start = time.time()
-    learn()
+    learn(movie_type="normal",npz_file_name="2Layer_999")
     elapsed_time = time.time() - start
     print ("elapsed_time:{0}".format(elapsed_time)) + "[sec]"
 
