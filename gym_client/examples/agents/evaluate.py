@@ -51,9 +51,9 @@ def make_error_movie(model_file="1Layer_999", movie_len = 60,input_movie="normal
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Process some integers.')
-    parser.add_argument('--model',  type=str ,default="1Layer_999")
+    parser.add_argument('--model',  type=str ,default="2Layer_nothing_9")
     parser.add_argument('--len',  type=int , default=60)
-    parser.add_argument('--input_movie',  type=str , default="anomaly")
+    parser.add_argument('--input_movie',  type=str , default="normal")
     parser.add_argument('--out_name',  type=str , default="output_movie.mp4")
     args = parser.parse_args()
 

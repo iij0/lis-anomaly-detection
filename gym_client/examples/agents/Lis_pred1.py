@@ -41,7 +41,7 @@ class PredNet1Layer(chainer.Chain):
 
 
 
-def learn(movie_type = "nothing"):
+def learn(movie_type = "nothing", test_movie_type="normal"):
     """
     movie.pickleを用いて，PredNetの学習を行う
     Returns:
@@ -100,11 +100,27 @@ def learn(movie_type = "nothing"):
         loss = 0
         optimizer.update()
 
+    # movie generate
+    #test_data = pickle.load(open("./movies/" + movie_type  + "_movie.pkl","r"))
+
+    #movie_len = 60
+    #size = (160,128)
+    #movie = np.zeros((movie_len,3 ,size[0],size[1]),dtype=np.float32)
+    #for i, seq in enumerate(range(movie_len)):
+    #    # 現在の環境では，5ステップ前後で1周
+    #    _ = model(seq, seq)
+    #    image = np.asarray( model.y.data)
+    #    movie[i] = image
+
+
+
+    #pickle.dump(model,open("1Layer_Test_" + str(epoch) + "_" + "movie.pkl" , "wb") , -1)
+
+    serializers.save_npz("1Layer_" + str(epoch) + "_" + "model.npz" , model)
     if args.gpu >= 0: model.to_cpu()
     print "model saving"
-    serializers.save_npz("1Layer_" + str(epoch) + "_" + "model.pkl", model)
-    serializers.load_npz("1Layer_" + str(epoch) + "_" + "model.pkl", model)
-    #pickle.dump(model,open("1Layer_" + str(epoch) + "_" + "model.pkl" , "wb") , -1)
+    pickle.dump(model,open("1Layer_" + str(epoch) + "_" + "model.pkl" , "wb") , -1)
+
 
 
 def observe(file_name = "movie"):
