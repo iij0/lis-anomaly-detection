@@ -148,7 +148,7 @@ def observe(file_name = "movie"):
 if __name__ == "__main__":
 
     start = time.time()
-    learn(movie_type="normal",npz_file_name="2Layer_999")
+    learn(movie_type="normal",npz_file_name="2Layer_999_in_nothing")
     elapsed_time = time.time() - start
     print ("elapsed_time:{0}".format(elapsed_time)) + "[sec]"
 
